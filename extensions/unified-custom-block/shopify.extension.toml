@@ -1,0 +1,4 @@
+[[extensions]]
+name = "UnifiedCustomBlock"
+type = "theme_app_extension"
+handle = "unified-custom-block-2"

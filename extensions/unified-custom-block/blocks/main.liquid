@@ -1,0 +1,68 @@
+<div>
+  <h2>{{ block.settings.block_title }}</h2>
+  
+  <form id="review-form">
+    <textarea name="review" placeholder="输入评论"></textarea>
+    <button type="submit">提交评论</button>
+  </form>
+
+  {% if block.settings.show_published_reviews %}
+    <h3>已审核评论</h3>
+    <div id="reviews-list"></div>
+  {% endif %}
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // 加载已审核的评论
+    fetch('https://853a-103-98-8-248.ngrok-free.app/reviews/submit')
+        .then(response => response.json())
+        .then(data => {
+            const reviewsList = document.getElementById("reviews-list");
+            data.forEach(review => {
+                const reviewItem = document.createElement("p");
+                reviewItem.innerText = review.content;
+                reviewsList.appendChild(reviewItem);
+            });
+        });
+
+    // 提交新评论
+    document.getElementById("review-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const reviewContent = event.target.review.value;
+
+        fetch('https://853a-103-98-8-248.ngrok-free.app/reviews/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: reviewContent })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+        });
+    });
+});
+</script>
+
+{% schema %}
+{
+  "name": "用户评论块",
+  "target": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "block_title",
+      "label": "标题",
+      "default": "用户评论"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_published_reviews",
+      "label": "显示已审核评论",
+      "default": true
+    }
+  ]
+}
+{% endschema %}
+
+
